@@ -2,6 +2,8 @@
 \usepackage{nips13submit_e,times}
 \usepackage{hyperref}
 \usepackage{url}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
 %\documentstyle[nips13submit_09,times,art10]{article} % For LaTeX 2.09
 
 
@@ -42,20 +44,47 @@ techniques to use to achieve our task.
 
 \section{Project Description}
 
-\subsection{yolo}
-swag swag swag
+The data for our project was taken from the MNIST dataset. As written on the
+Kaggle competition website, ``The MNIST
+('Modified National Institute of Standards and Technology') dataset
+is a classic within the Machine Learning community that has been extensively
+studied. More detail about the dataset, including Machine Learning algorithms
+that have been tried on it and their levels of success, can be found at
+http://yann.lecun.com/exdb/mnist/index.html.''
+
+Simply put, we aim to take pixel data from gray-scale images of hand-drawn digits
+and classify the digit as a number from 0 to 9.
 
 \section{Progress}
-We have implemented a classifier using $k$-nearest neighbors regression. 
-We found the k point(s) with the smallest Euclidean distance(s). Given runtime constraints,
-we ran the algorithm on a fraction of the dataset (1000 rows) with validation blocks of
-size 200 rows. For each row of the validation set, we found the $k$ nearest neighbors. Then, for
-each of these neighbors' classifications, amongst the $k$ nearest neighbors, we find the classification
-with the lowest average distance. This classification will be our prediction $\hat{y}$ for the given $x_i$.
 
-We then compare our $\hat{y}$ to the true classification. The number of incorrect predictions divided by
-the number of total predictions is validation error. As we iterate over our validation blocks,
-we try different values of k (1, 5, 10, 50, and 100), and then graph the corresponding validation errors.
+\subsection{Readings}
+The readings were helpful in directing us towards the techniques that we should
+try to implement. We understood from the
+conclusions of the Lecun paper [1] that the k-Nearest Neighbors algorithm would not
+only pose serious scaleability difficulties when it came to runtime and memory
+usage, but it would also be a comparatively unreliable classifier.
+
+Our findings from the milestone portion of the project confirms this, with our implementation
+of k-NN taking a good amount of time (roughly 5 minutes) to run over less than
+10 percent of the total dataset. In addition, we only achieved classification
+errors of roughly 10 
+to 20 percent. When we implement a convolutional neural network, like LeCun did
+in his paper, we expect a decrease in runtime and memory usage (which
+would promote scaleability), as well as a decrease in classification error.
+
+\subsection{k-NN}
+We have implemented a classifier using $k$-nearest neighbors regression. In
+order to determine the best value of $k$ to use, we implemented cross-validation
+using an 80-20 split.
+
+The first issue we ran into was the massive runtime needed to run k-nn over such
+a large model (the training set has 42,000 points). Given runtime constraints,
+we ran the algorithm on 10\% of the training set.
+For each value of $k$, we found the classification error on the validation set.
+
+\includegraphics{k-nn.png}
+
+
 
 \subsubsection*{References}
 

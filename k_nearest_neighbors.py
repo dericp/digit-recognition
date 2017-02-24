@@ -5,39 +5,43 @@ from collections import defaultdict
 import math
 
 
-VALIDATION_BLOCK_SIZE = 60
-k_vals = [1, 5, 10, 50, 100]
-df_train = pd.read_csv("data/train.csv", nrows=300)
-training_data = df_train.drop("label", axis=1).values
-training_classifications = df_train["label"].values
-df_test = pd.read_csv("data/test.csv", nrows=300)
+K_VALS = [1, 5, 25, 125, 625]
+PERCENT_VALIDATION = 0.2
 
 
 def main():
-    ##### Run cross validation
-    validation_errors = []
-    for i in range(len(k_vals)):
-        print('i: ' + str(i))
-        k = k_vals[i]
-        # Build the validation set
-        validation_start = VALIDATION_BLOCK_SIZE * i
-        validation_end = VALIDATION_BLOCK_SIZE * (i + 1)
-        validation_data = training_data[validation_start:validation_end]
-        validation_classifications = training_classifications[validation_start:validation_end]
-        # Build the trainig set
-        model = np.concatenate((training_data[:validation_start], training_data[validation_end:]), axis=0)
-        model_classifications = np.concatenate((training_classifications[:validation_start], training_classifications[validation_end:]), axis=0)
-        validation_error = get_validation_error(validation_data, validation_classifications, model, model_classifications, k)
+    df_train = pd.read_csv("data/train.csv").sample(frac=0.1)
+    training_data = df_train.drop("label", axis=1).values
+    training_classifications = df_train["label"].values
+    validation_set_size = int(training_data.shape[0] * PERCENT_VALIDATION)
+    print(str(validation_set_size))
+    print(str(training_data.shape))
 
+    validation_errors = []
+    for i in range(len(K_VALS)):
+        print('k = ' + str(K_VALS[i]))
+        k = K_VALS[i]
+
+        # build the validation set
+        start_index = validation_set_size * i
+        end_index = validation_set_size * (i + 1)
+
+        validation_data = training_data[start_index:end_index]
+        validation_classifications = training_classifications[start_index:end_index]
+
+        # build the model
+        model = np.concatenate((training_data[:start_index], training_data[end_index:]), axis=0)
+        model_classifications = np.concatenate((training_classifications[:start_index], training_classifications[end_index:]), axis=0)
+
+        validation_error = get_validation_error(validation_data, validation_classifications, model, model_classifications, k)
         validation_errors.append(validation_error)
 
-    plt.plot(k_vals, validation_errors)
-    plt.title("k-Choice and validation error on k-NN digit classification")
+    plt.plot(K_VALS, validation_errors)
+    plt.title("K vs. Classification Error")
     plt.xlabel("k value")
-    #plt.xscale('log')
-    plt.ylabel("validation error")
-    #plt.show()
-    plt.savefig('lol.png')
+    plt.xscale('log')
+    plt.ylabel("classification error")
+    plt.savefig('k-nn-log2.png')
 
 
 # @param: point1, point2 - arrays of pixel data for two points

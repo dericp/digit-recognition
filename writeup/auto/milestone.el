@@ -15,7 +15,8 @@
     "nips13submit_e"
     "times"
     "hyperref"
-    "url")
+    "url"
+    "graphicx")
    (TeX-add-symbols
     "fix"
     "new"))
