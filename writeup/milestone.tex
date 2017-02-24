@@ -70,7 +70,12 @@ of k-NN taking a good amount of time (roughly 5 minutes) to run over less than
 errors of roughly 10 
 to 20 percent. When we implement a convolutional neural network, like LeCun did
 in his paper, we expect a decrease in runtime and memory usage (which
-would promote scaleability), as well as a decrease in classification error.
+would promote scaleability), as well as a large decrease in classification error.
+
+Additionally, Maji and Malik [2] found that ``with improved features a low
+complexity classifier, in particular
+an additive-kernel SVM, can achieve state of the art performance.'' We hope to
+attempt to implement this as well.
 
 \subsection{k-NN}
 We have implemented a classifier using $k$-nearest neighbors regression. In
@@ -84,6 +89,23 @@ For each value of $k$, we found the classification error on the validation set.
 
 \includegraphics{k-nn.png}
 
+Surprisingly, we can see that with $k = 1$ we achieve the lowest classification
+error. This is most likely due to the lack of a kernel to weigh the points
+according to how far they are from the query.
+
+\section{What's Next}
+
+The first thing to try next is to add a kernel to our current k-NN
+implementation. We suspect that this will decrease our classification error
+significantly, epecially for larger values of $k$. However, this will not solve
+the problem of the massive runtime needed for k-nn.
+
+We hope to implement an SVM based on what was discussed by Maji and Malik [2].
+This will significantly decrase the runtime of our classifier.
+
+Finally, we want to implement a convolutional neural network. As Lecun [1] found,
+the nueral network performs the best out of all the conventional classification
+methods on hand-drawn digits.
 
 
 \subsubsection*{References}
