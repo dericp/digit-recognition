@@ -45,9 +45,17 @@ techniques to use to achieve our task.
 \subsection{yolo}
 swag swag swag
 
-\subsection{yolo2}
+\section{Progress}
+We have implemented a classifier using $k$-nearest neighbors regression. 
+We found the k point(s) with the smallest Euclidean distance(s). Given runtime constraints,
+we ran the algorithm on a fraction of the dataset (1000 rows) with validation blocks of
+size 200 rows. For each row of the validation set, we found the $k$ nearest neighbors. Then, for
+each of these neighbors' classifications, amongst the $k$ nearest neighbors, we find the classification
+with the lowest average distance. This classification will be our prediction $\hat{y}$ for the given $x_i$.
 
-swag2 swag2 swag2
+We then compare our $\hat{y}$ to the true classification. The number of incorrect predictions divided by
+the number of total predictions is validation error. As we iterate over our validation blocks,
+we try different values of k (1, 5, 10, 50, and 100), and then graph the corresponding validation errors.
 
 \subsubsection*{References}
 
