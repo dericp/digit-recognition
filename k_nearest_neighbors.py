@@ -41,7 +41,7 @@ def main():
     plt.xlabel("k value")
     plt.xscale('log')
     plt.ylabel("classification error")
-    plt.savefig('k-nn-log2.png')
+    plt.savefig('k-nn.png')
 
 
 # @param: point1, point2 - arrays of pixel data for two points
