@@ -1,0 +1,12 @@
+kernel for k-nn (sai)
+initial SVM (sai)
+tune k-nn hyperparameters (sai)
+SVM with PEGASOS (deric)
+SVM with RFF (deric)
+SVM with Berkeley technical report additions (deric)
+implement basical neueral network from scratch
+tune hyperparameters on nn (deric)
+k-nn baseline with scikit learn (sai)
+svm baseline with scikit learn (sai)
+poster
+
