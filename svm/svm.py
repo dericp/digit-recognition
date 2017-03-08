@@ -1,14 +1,15 @@
 import numpy as np
 import pandas as pd
 
-
-step_sizes = [1e-6, 1e-9, 1e-12]
-c_vals = [0.1, 1, 10, 1000, 10000]
+step_size = 1e-12 # best step size we found
+C = 5000 # best c value we found
+step_sizes = [1e-10, 1e-11, 1e-12, 1e-13, 1e-14]
+C_vals = [500, 1000, 5000, 10000, 20000]
 EPOCHS = 10
 lambda_val = 1e-6
 sigma = 10
 m = 3000
-dev = True
+dev = False
 
 
 def main():
@@ -27,15 +28,15 @@ def main():
         w_s = {}  # a map from classification {0, ..., 9} to weight vector
         for class_val in range(10):
             #w = pegasos(X, y, class_val, EPOCHS)
-            w = sgd(X, y, class_val, 1e-10, 1000, EPOCHS)
+            w = sgd(X, y, class_val, 1e-12, 10000, EPOCHS)
             w_s[class_val] = w
 
         test_error = calculate_test_error(w_s, X_test, y_test)
         print('test error: ', test_error)
     else:
         for step_size in step_sizes:
-            for c in c_vals:
-                print('step size: ', step_size, ' c: ', c)
+            for C in C_vals:
+                print('step size: ', step_size, ' c: ', C)
 
                 df_train_dev, df_dev = np.split(df_train.sample(frac=1), [int(.8 * len(df_train))])
                 X = transform(df_train_dev.drop("label", axis=1).values)
@@ -47,7 +48,7 @@ def main():
                 w_s = {} # a map from classification {0, ..., 9} to weight vector
                 for class_val in range(10):
                     #w = pegasos(X, y, class_val, EPOCHS)
-                    w = sgd(X, y, class_val, step_size, c, EPOCHS)
+                    w = sgd(X, y, class_val, step_size, C, EPOCHS)
                     w_s[class_val] = w
 
                 test_error = calculate_test_error(w_s, X_dev, y_dev)
