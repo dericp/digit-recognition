@@ -1,12 +1,24 @@
 kernel for k-nn (sai)
-initial SVM (sai)
+initial SVM (sai) DONE
 tune k-nn hyperparameters (sai)
-SVM with PEGASOS (deric)
+SVM with PEGASOS (deric) DONE
 SVM with RFF (deric)
 SVM with Berkeley technical report additions (deric)
-implement basical neueral network from scratch
 tune hyperparameters on nn (deric)
-k-nn baseline with scikit learn (sai)
-svm baseline with scikit learn (sai)
+k-nn baseline with scikit learn (sai) DONE
+svm baseline with scikit learn (sai) 
 poster
 
+
+WHATEVER DONE BY 11
+DERIC: Pegasos, SVM we've implemented
+SAI: Kernelize KNN, Baselines 
+
+Graphs We Need:
+
+SVM: 2d plot of hyper parameters for both SVMs (C and stepsize), Pegasos (lambda value)
+KNN: Linear (k values), Gaussian 
+
+Best test error for each
+
+Baselines fix, plots
