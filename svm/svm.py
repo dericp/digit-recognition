@@ -5,10 +5,10 @@ import pandas as pd
 import random
 
 PEGASOS = True
-KERNEL = True
+KERNEL = False
 SIGMA = 5**0.5
-OPT_STEP = 1e-12 # best step size we found
-OPT_C = 5000 # best c value we found
+OPT_STEP = 1e-11 # best step size we found
+OPT_C = 12000 # best c value we found
 OPT_LAMBDA = 1e-5
 EPOCHS = 10
 
@@ -20,7 +20,7 @@ m = 1000
 
 
 def main():
-    df_train = pd.read_csv('../data/mnist_train.csv').sample(1000)
+    df_train = pd.read_csv('../data/mnist_train.csv')
     df_train['bias'] = 1
 
     if dev:
@@ -34,7 +34,7 @@ def main():
             X = transform(X)
         y = df_train['label'].values
 
-        df_test = pd.read_csv('../data/mnist_test.csv').sample(100)
+        df_test = pd.read_csv('../data/mnist_test.csv')
         df_test['bias'] = 1
         X_test = df_test.drop('label', axis=1).values
         if KERNEL:
@@ -142,8 +142,16 @@ def pegasos(X, y, class_val, lambda_val, epochs):
     w = np.zeros(X.shape[1])
     t = 1
 
-    for epoch in range(epochs):
-        points = list(range(X.shape[0]))
+    for epoch in range(epochs * X.shape[0]):
+        i = int(np.random.uniform(0, X.shape[0]))
+        if y[i] == class_val:
+            y_i = 1
+        else:
+            y_i = -1
+        learning_rate = 1 / (lambda_val * t)
+
+        w = (1 - learning_rate * lambda_val) * w + learning_rate * hinge_loss_gradient(w, X[i], y_i)
+        '''points = list(range(X.shape[0]))
         random.shuffle(points)
         for point in points:
             if y[point] == class_val:
@@ -157,7 +165,7 @@ def pegasos(X, y, class_val, lambda_val, epochs):
             # optional projection step, currently messing things up
             #new_w = min(1, ((1 / lambda_val**0.5) / np.linalg.norm(new_w))) * new_w
 
-            t += 1
+            t += 1'''
 
     return w
 
