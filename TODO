@@ -25,6 +25,6 @@ Baselines fix, plots
 
 
 Add in data to tables to presentation
-Try different convergence criterias for SVM
+Try different convergence criterias for SVM (still slow as fuck)
 See if kernelized KNN can be optimized
-Why does the kernelized SVM library do so much worse
+Why does the kernelized SVM library do so much worse????
