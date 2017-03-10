@@ -1,25 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 import random
 
 PEGASOS = True
-KERNEL = False
+KERNEL = True
+SIGMA = 5**0.5
 OPT_STEP = 1e-12 # best step size we found
 OPT_C = 5000 # best c value we found
 OPT_LAMBDA = 1e-5
 EPOCHS = 10
 
-dev = True
+dev = False
 step_sizes = [1e-10, 1e-11, 1e-12, 1e-13, 1e-14]
 C_vals = [500, 1000, 5000, 10000, 20000]
 lambda_vals = [1e-1, 1e-3, 1e-5, 1e-7, 1e-9]
-sigma = 10
 m = 1000
 
 
 def main():
-    df_train = pd.read_csv('../data/mnist_train.csv')
+    df_train = pd.read_csv('../data/mnist_train.csv').sample(1000)
     df_train['bias'] = 1
 
     if dev:
@@ -33,7 +34,7 @@ def main():
             X = transform(X)
         y = df_train['label'].values
 
-        df_test = pd.read_csv('../data/mnist_test.csv')
+        df_test = pd.read_csv('../data/mnist_test.csv').sample(100)
         df_test['bias'] = 1
         X_test = df_test.drop('label', axis=1).values
         if KERNEL:
@@ -76,7 +77,7 @@ def pegasos_cross_validation(df_train):
     plt.plot(lambda_vals, test_errors)
     plt.title('PEGASOS Lambda vs. Validation Error')
     plt.xscale('log')
-    plt.xlabel('C')
+    plt.xlabel('lambda')
     plt.ylabel('% misclassified')
     plt.savefig('pegasos_lambda.png')
 
@@ -104,6 +105,8 @@ def sgd_cross_validation(df_train):
             test_error = calculate_test_error(w_s, X_dev, y_dev)
             print('test error: ', test_error)
 
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
 
 # transforms X into m-dimensional feature vectors using RFF and RBF kernel
@@ -111,7 +114,7 @@ def sgd_cross_validation(df_train):
 def transform(X):
     #np.random.seed(0)
     b = np.random.rand(m) * 2 * np.pi
-    w = np.random.multivariate_normal(np.zeros(X.shape[1]), sigma**2 * np.identity(X.shape[1]), m)
+    w = np.random.multivariate_normal(np.zeros(X.shape[1]), SIGMA ** 2 * np.identity(X.shape[1]), m)
     transformed = (2.0 / m)**0.5 * np.cos(np.dot(X, w.T) + b)
     # feature normalization
     transformed = (transformed - np.mean(transformed, 0)) / np.std(transformed, 0)
