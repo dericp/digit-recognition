@@ -1,2 +1,5 @@
 .idea/
 data/
+.ipynb_checkpoints
+.DS_Store
+MNIST_data
