@@ -69,7 +69,7 @@ points.
 
 The specific flavor of the MNIST dataset that we used came from
 \href{https://pjreddie.com/projects/mnist-in-csv/}{https://pjreddie.com/projects/mnist-in-csv/}
-where the data is formated as a CSV.
+where the data is formated as CSV files.
 
 \section{First Considerations}
 \subsection{Machine Learning Techniques}
@@ -89,8 +89,8 @@ However, we wanted to determine which techniques would be the most insightful,
 interesting, and performant to implement for our project even though the
 readings pointed out a clear state-of-the-art.
 
-We found from the
-conclusions of Lecun [1] that the k-Nearest Neighbors classifier would not
+We saw from the
+conclusions of Lecun [1] that a k-Nearest Neighbors classifier would not
 only pose serious scaleability difficulties when it came to runtime and memory
 usage, but it would also be a comparatively unreliable classifier. We decided
 that it would be interesting to see just how difficult it would be to deal with
@@ -135,58 +135,61 @@ To tune hyperparameters, we used cross-validation with random 80-20 splits. We
 consistently report the validation errors from the cross-validation and the test
 error on the MNIST test set.
 
-\subsection{$k$-Nearest Neighbors}
-We implemented a $k$-nearest neighbors ($k$-NN) classifier using
-$k$-nearest neighbors regression. 
-The first issue we ran into was the intractable runtime needed to run $k$-NN
-over the large training set of 60,000 images. Given runtime constraints,
-we ran the algorithm on 10\% of the training set.
-For each value of $k$, we found the classification error on the validation set.
-
-TODO these graphs say classification error when it should be VALIDATION error.
-
-\includegraphics[width=\textwidth]{k-nn.png}
-
-Surprisingly, we can see that with $k = 1$ we achieve the lowest classification
-error. This is most likely due to the lack of a kernel to weigh the points
-according to how far they are from the query. We would expect that as $k$
-increases, our classification error would decrase. However, without a
-proper kernel to weigh the data points, this is unlikely.
-
-We first tackled nearest neighbor regression. For baselining, we used
-the scikit-learn NearestNeighbors functionality. Rather than choosing a
-particular nearest neighbors algorithm, we let scikit-learn decide which
-nearest neighbors algorithm to use after analysis of the training model.
-Algorithms available include brute force, the K-D tree, and Ball tree.
-The latter two trade precision off for efficiency by using heuristics to
-prune which points are considered when evaluating “nearest neighbors.” The
-decision on which algorithm to use is based on the number of samples, the
+\subsection{$k$-Nearest Neighbors ($k$-NN)}
+\subsubsection{Scikit-learn $k$-NN}
+To baseline our $k$-NN classifier, we used
+the scikit-learn's $k$-NN implementation.
+Scikit-learn's $k$-NN can utilize different approaches like brute-force,
+a K-D tree, and a Ball tree.
+The K-D tree and Ball tree trade precision for efficiency by utilizing heuristics to
+prune which points are considered when evaluating the nearest neighbors.
+Scikit-learn
+decides which algorithm to use based on the number of samples $N$, the
+dimensionality of the data $D$, the
 structure of the data (e.g. sparsity, intrinsic dimensionality), the number
-of neighbors requested for a query point, and the number of query points.
-The baseline library ended up choosing the K-D tree algorithm because of
-the k values we cross validated over, and the one we ended up using for
-our final model, being less than N/2. 
-We ran cross-validation over a small subset of our training set (1/10th
-of the training set). Running cross validation over a set of k values from
-1 to 625, we found that a k of 1 minimized our validation error. 
+of neighbors $k$ requested for a query point, and the number of query points.
 
-\includegraphics[width=\textwidth]{sklearn-knn-cv.png}
+After tuning $k$ using cross-validation, we found that scikit-learn prefers to
+use a K-D tree. Running cross-validation over a set of $k$ values between
+1 and 625, we found that $k = 1$ minimized our validation error. The results of
+this cross-validation can be seen in figure \ref{fig:sklearn-knn-k-cv}.
 
-After running cross validation on our baseline, we implemented our own
-K-Nearest Neighbors algorithm. We used a brute force algorithm that scans
-every point in the training set to find the k neighbors with the lowest
-Euclidean distances from the query point. Then, amongst those k neighbors,
-we found the classification with the lowest average Euclidean distance from
-the query point. That classification was the classification we’d assigned to
-the query point.
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{sklearn-knn-k-cv.png}
+\caption{cross validation of scikit-learn's $k$-NN over varying $k$ values}
+\label{fig:sklearn-knn-k-cv}
+\end{figure}
 
-\includegraphics[width=\textwidth]{k-nn.png}
+\subsubsection{$k$-NN Regression}
+We have implemented a $k$-NN classifier using
+$k$-NN regression. After determining the nearest neighbors,
+we use a brute force algorithm that scans
+every point in the training set to find the $k$ neighbors with the lowest
+Euclidean distances from the query point. Then, amongst those $k$ neighbors,
+we find the classification with the lowest average Euclidean distance from
+the query point and assign its value to the query point.
 
-We ran cross-validation over a small subset of our training data (once again,
-1/10th).
-The results backed up the results from the library implementation with a k
-of 1 minimizing our validation error. 
-Afterwards, we implemented a Gaussian kernel and classified query points
+We found the runtime of $k$-NN when using the entire training set of 60,000
+images to be intractable. Given runtime constraints,
+we used 10\% of the training set in our $k$-NN regression.
+We found that with $k = 1$, our $k$-NN classifier obtained the lowest validation
+error. Although this was consistent with the result of cross-validation with
+scikit-learn's
+$k$-NN classifier, we predicted that with the use of a kernel, our results would change.
+We hoped that as $k$
+increased, our classification error would decrease. However, without a
+proper kernel to weigh the data points, we decided that it was possible for
+larger values of $k$ to produce inaccurate classifications.
+Results of cross-validation over varying $C$ values can be seen in figure \ref{fig:knn-c-cv}.
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{knn-c-cv.png}
+\caption{cross validation of $k$-NN over varying $k$ values}
+\label{fig:knn-c-cv}
+\end{figure}
+
+\subsubsection{Kernelized $k$-NN}
+We implemented a Gaussian kernel and classified query points
 based off of the Nadaraya Watson Kernel Weighted Average. Instead of finding
 the k nearest neighbors to classify a query point, we used this Kernelized
 Regression to calculate the classification for each query point.
@@ -199,9 +202,12 @@ its classification, we had to tune our bandwidth value $\lambda$ rather than a k
 As a result of overflow and underflow errors, we could only test a range
 of bandwidths from $10^4$ to $10^6$. 
 
-TODO this x-axis is mislablbed, it should be BANDWIDTH
 
+\begin{figure}[h]
 \includegraphics[width=\textwidth]{knn-kernel-bandwidth-cv.png}
+\caption{cross validation of kernelized $k$-NN over varying bandwidth values}
+\label{fig:knn-kernel-bandwidth-cv}
+\end{figure}
 
 Running cross validation on 1/10th of our training set, we found that a
 bandwidth of 104 not only avoided overflow errors, it also minimized validation error.
@@ -212,9 +218,13 @@ we used scikit-learns LinearSVC and SVC functionality. The
 former trains a Support Vector Machine until convergence with
 a Linear kernel, and the latter with a Radial Basis function kernel. 
 
+\begin{figure}[h]
 \includegraphics[width=\textwidth]{sklearn-svm-c-cv.png}
+\end{figure}
 
+\begin{figure}[h]
 \includegraphics[width=\textwidth]{sklearn-svm-kernel-c-cv.png}
+\end{figure}
 
 Running cross-validation for each C value over a small subset of
 the training set (10000 rows), we found that C values of 1 and 100

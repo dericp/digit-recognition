@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 import random
+import argparse
 
-PEGASOS = True
-KERNEL = False
+#PEGASOS = True
+#KERNEL = False
 SIGMA = 5**0.5
 OPT_STEP = 1e-11 # best step size we found
 OPT_C = 12000 # best c value we found
@@ -20,30 +21,41 @@ m = 1000
 
 
 def main():
+    """
+    Trains the SVM on the training set and evaluates it on the test data.
+
+    """
+
+    parser = argparse.ArgumentParser(description=".")
+    parser.add_argument('-p', '--pegasos', action='store_true')
+    parser.add_argument('-k', '--kernel', action='store_true')
+    parser.add_argument('-cv', '--cross-validation', action='store_true')
+    args = parser.parse_args()
+
     df_train = pd.read_csv('../data/mnist_train.csv')
     df_train['bias'] = 1
 
-    if dev:
-        if PEGASOS:
+    if args.cross_validation:
+        if args.pegasos:
             pegasos_cross_validation(df_train)
         else:
             sgd_cross_validation(df_train)
     else:
         X = df_train.drop('label', axis=1).values
-        if KERNEL:
+        if args.kernel:
             X = transform(X)
         y = df_train['label'].values
 
         df_test = pd.read_csv('../data/mnist_test.csv')
         df_test['bias'] = 1
         X_test = df_test.drop('label', axis=1).values
-        if KERNEL:
+        if args.kernel:
             X_test = transform(X_test)
         y_test = df_test['label'].values
 
         w_s = {}  # a map from classification {0, ..., 9} to weight vector
         for class_val in range(10):
-            if PEGASOS:
+            if args.pegasos:
                 w = pegasos(X, y, class_val, OPT_LAMBDA, EPOCHS)
             else:
                 w = sgd(X, y, class_val, OPT_STEP, OPT_C, EPOCHS)
@@ -151,6 +163,7 @@ def pegasos(X, y, class_val, lambda_val, epochs):
         learning_rate = 1 / (lambda_val * t)
 
         w = (1 - learning_rate * lambda_val) * w + learning_rate * hinge_loss_gradient(w, X[i], y_i)
+        t += 1
         '''points = list(range(X.shape[0]))
         random.shuffle(points)
         for point in points:
