@@ -217,39 +217,68 @@ bandwidth of $10^4$ not only avoided overflow errors, it also minimized validati
 
 \subsection{Support Vector Machine (SVM)}
 \subsubsection{Scikit-learn SVM}
-We then tackled Support Vector Machines. For baselining,
-we used scikit-learns LinearSVC and SVC functionality. The
-former trains a Support Vector Machine until convergence with
-a Linear kernel, and the latter with a Radial Basis function kernel. 
+To baseline our SVM,
+we used scikit-learn's LinearSVC and SVC functionality. The
+former trains a linear SVM until convergence, and the latter uses a Radial Basis function kernel. 
 
-To baseline our SVM, we trained two SVMs using scikit-learn. The first SVM was a
-linear SVM, and the second used a Radia Basis function kernel.
+We performed cross-validation over varying C values on 17\% of
+the training set (10000 images). We found that C values of 1 and 100
+minimized validation error in the Linear and Kernelized SVMs, respectively.
+This result was surprising to us---in particular, we did not expect a C value of
+1 to produce a good result. After further investigation, we
+suspect that the differences in
+validation error can be ascribed to differences in validation data splits.
+Nonetheless, we
+used those respective C-values for creating our model against the
+the training data and running it against the test data. Results of the
+cross-validation can be seen in figures \ref{fig:sklearn-sv-c-cv} and \ref{fig:sklearn-svm-kernel-c-cv}.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\textwidth]{sklearn-svm-c-cv.png}
+\caption{cross validation of scikit-learn's linear SVM over varying C values}
+\label{fig:sklearn-sv-c-cv}
 \end{figure}
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.7\textwidth]{sklearn-svm-kernel-c-cv.png}
+\caption{cross validation of scikit-learn's kernelized SVM over varying C values}
+\label{fig:sklearn-svm-kernel-c-cv}
 \end{figure}
 
-Running cross-validation for each C value over a small subset of
-the training set (10000 rows), we found that C values of 1 and 100
-minimized validation error in the Linear and RBF SVMs respectively.
-This was surprising to us, especially the former C-value, and we
-suspected after some tinkering around that the differences in
-validation error can be ascribed to differences in the validation
-blocks’ data rather than differences in C value. Nonetheless, we
-used those respective C-values for creating our model against the
-the training data and running it against the test data. 
+\subsubsection{SVM Trained With Stochastic Gradient Descent}
+We have implemented a vanilla SVM trained with SGD. Performing cross-validation
+over varying step-sizes and C values, we obtained an optimal step size of $1 *
+10^{-11}$ and an optimal C value of $12,000$. Results of the cross-validation
+can be seen in figure \ref{fig:svm-step-C-cv}.
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{svm-step-C-cv.png}
+\caption{cross validation of SGD SVM over varying step sizes and C values}
+\label{fig:svm-step-C-cv}
+\end{figure}
+
+This SVM was fast to train and performed quite well as we will see in section \ref{results}.
+
+\subsubsection{SVM Trained With PEGASOS}
+We decided to investigate different training methods for SVMs. As a result, we
+also trained an SVM with the PEGASOS [4] algorithm. Performing cross-validation
+over varying $\lambda$ values, we obtained an optimal $\lambda$ value of
+$10^{-7}$. Results of the cross-validation can be see in figure \ref{fig:pegasos-lambda-cv}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{pegasos-lambda-cv.png}
+\caption{cross validation of PEGASOS SVM over varying $\lambda$ values}
+\label{fig:pegasos-lambda-cv}
+\end{figure}
 
 \subsection{CNN}
 TODO
 
-\section{Results}
+\section{Results} \label{results}
 
 \subsubsection*{References}
 
