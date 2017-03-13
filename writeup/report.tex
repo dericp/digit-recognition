@@ -155,7 +155,8 @@ use a K-D tree. Running cross-validation over a set of $k$ values between
 this cross-validation can be seen in figure \ref{fig:sklearn-knn-k-cv}.
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{sklearn-knn-k-cv.png}
+\centering
+\includegraphics[width=0.7\textwidth]{sklearn-knn-k-cv.png}
 \caption{cross validation of scikit-learn's $k$-NN over varying $k$ values}
 \label{fig:sklearn-knn-k-cv}
 \end{figure}
@@ -183,7 +184,8 @@ larger values of $k$ to produce inaccurate classifications.
 Results of cross-validation over varying $C$ values can be seen in figure \ref{fig:knn-c-cv}.
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{knn-c-cv.png}
+\centering
+\includegraphics[width=0.7\textwidth]{knn-c-cv.png}
 \caption{cross validation of $k$-NN over varying $k$ values}
 \label{fig:knn-c-cv}
 \end{figure}
@@ -204,13 +206,14 @@ of bandwidths from $10^4$ to $10^6$.
 
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{knn-kernel-bandwidth-cv.png}
+\centering
+\includegraphics[width=0.7\textwidth]{knn-kernel-bandwidth-cv.png}
 \caption{cross validation of kernelized $k$-NN over varying bandwidth values}
 \label{fig:knn-kernel-bandwidth-cv}
 \end{figure}
 
 Running cross validation on 1/10th of our training set, we found that a
-bandwidth of 104 not only avoided overflow errors, it also minimized validation error.
+bandwidth of $10^4$ not only avoided overflow errors, it also minimized validation error.
 
 \subsection{Support Vector Machine (SVM)}
 \subsubsection{Scikit-learn SVM}
@@ -223,11 +226,13 @@ To baseline our SVM, we trained two SVMs using scikit-learn. The first SVM was a
 linear SVM, and the second used a Radia Basis function kernel.
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{sklearn-svm-c-cv.png}
+\centering
+\includegraphics[width=0.7\textwidth]{sklearn-svm-c-cv.png}
 \end{figure}
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{sklearn-svm-kernel-c-cv.png}
+\centering
+\includegraphics[width=0.7\textwidth]{sklearn-svm-kernel-c-cv.png}
 \end{figure}
 
 Running cross-validation for each C value over a small subset of
