@@ -1,4 +1,4 @@
-\documentclass{article} % For LaTeX2e
+﻿\documentclass{article} % For LaTeX2e
 \usepackage{nips13submit_e,times}
 \usepackage{hyperref}
 \usepackage{url}
@@ -138,7 +138,7 @@ error on the MNIST test set.
 \subsection{$k$-Nearest Neighbors ($k$-NN)}
 \subsubsection{Scikit-learn $k$-NN}
 To baseline our $k$-NN classifier, we used
-the scikit-learn's $k$-NN implementation.
+scikit-learn's $k$-NN implementation.
 Scikit-learn's $k$-NN can utilize different approaches like brute-force,
 a K-D tree, and a Ball tree.
 The K-D tree and Ball tree trade precision for efficiency by utilizing heuristics to
@@ -163,21 +163,20 @@ this cross-validation can be seen in figure \ref{fig:sklearn-knn-k-cv}.
 
 \subsubsection{$k$-NN Regression}
 We have implemented a $k$-NN classifier using
-$k$-NN regression. After determining the nearest neighbors,
-we use a brute force algorithm that scans
-every point in the training set to find the $k$ neighbors with the lowest
-Euclidean distances from the query point. Then, amongst those $k$ neighbors,
-we find the classification with the lowest average Euclidean distance from
-the query point and assign its value to the query point.
+$k$-NN regression. We used a brute force algorithm that scans every point
+in the training set to find the k neighbors with the lowest Euclidean distances from 
+the query point. Then, amongst those k neighbors, we found the classification with the lowest
+average Euclidean distance from the query point. That classification was assigned to the
+query point.
 
 We found the runtime of $k$-NN when using the entire training set of 60,000
 images to be intractable. Given runtime constraints,
 we used 10\% of the training set in our $k$-NN regression.
 We found that with $k = 1$, our $k$-NN classifier obtained the lowest validation
-error. Although this was consistent with the result of cross-validation with
+error. This was consistent with the result of cross-validation on
 scikit-learn's
-$k$-NN classifier, we predicted that with the use of a kernel, our results would change.
-We hoped that as $k$
+$k$-NN classifier. 
+We initially hoped that as $k$
 increased, our classification error would decrease. However, without a
 proper kernel to weigh the data points, we decided that it was possible for
 larger values of $k$ to produce inaccurate classifications.
