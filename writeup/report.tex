@@ -212,11 +212,15 @@ of bandwidths from $10^4$ to $10^6$.
 Running cross validation on 1/10th of our training set, we found that a
 bandwidth of 104 not only avoided overflow errors, it also minimized validation error.
 
-\subsection{SVM}
+\subsection{Support Vector Machine (SVM)}
+\subsubsection{Scikit-learn SVM}
 We then tackled Support Vector Machines. For baselining,
 we used scikit-learns LinearSVC and SVC functionality. The
 former trains a Support Vector Machine until convergence with
 a Linear kernel, and the latter with a Radial Basis function kernel. 
+
+To baseline our SVM, we trained two SVMs using scikit-learn. The first SVM was a
+linear SVM, and the second used a Radia Basis function kernel.
 
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{sklearn-svm-c-cv.png}
