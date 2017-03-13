@@ -329,6 +329,37 @@ are presented in figure \ref{fig:test-results}.
 \label{fig:test-results}
 \end{figure}
 
+\section{Conclusions}
+We were somewhat suprised at how effective the nearest neighbor algorithm was.
+Our implementation of K-Nearest Neighbors performed similarly to the SciKit baseline
+with a 4.5\% test error compared to the baseline's 4.7\% error. We ascribe the negligible
+disparity in test error due to a difference in which points were sampled from the training set
+and constituted our model. The kernelized regression disappointed us with its 4.7\% test error,
+which was higher than the unkernelized k-Nearest Neighbors regression. However, we suspect
+that if it weren't for overflow issues that restricted us to bandwidths greater than $10^4$, 
+we could've tuned a bandwidth that made kernelized regression have an even lower test error than
+unkernelized k-nearest neighbors. For both algorithms, running on the entire dataset rather than a
+small fraction would likely reduce test error by quite a bit, but we couldn't afford that runtime
+magnitude.
+
+Our support vector machine impressed us. We implemented stochastic gradient descent over a set
+number of epochs, and we beat the performance of the library SVMs that ran to convergence. With the
+PEGASOS optimization, we saw a slight increase in accuracy. What surprised us was how the introduction
+of Random Fourier Features to approximate a Radial Basis Function kernel. Classification was not 
+significantly better than random. The Radial Basis Function kernel's inadequacy in the Baseline
+SciKit Support Vector Machine also suggests that properties of the data itself made the radial
+basis function and random fourier features techniques ineffective in classification.
+
+In terms of both accuracy and runtime, the convolutional neural network was unparalled. The large,
+60000 row dataset was too much for every other algorithm to handle - taking days to build a model 
+off of - but the CNN built a model in comparatively little time. 
+
+As a conclusion, it is clear to see the advantages of the convolutional neural network, given large
+datasets, in both minimizing runtime and maximizing accuracy. That being said, the major takeaway
+was an appreciation for simplicity in techniques. Kernelization is not a given for maximizing accuracy and should be done based off of the dataset. We were also extremely impressed with how accurate
+classification can be when all you do is take a guess based off of the closest point. The latter
+point might not have been an argument of the Lecun paper, but it's definitely something we learned
+over the course of our project.
 
 \subsubsection*{References}
 
