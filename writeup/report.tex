@@ -35,12 +35,12 @@ Saidutt Nimmagadda \\
 
 \maketitle
 
-\begin{abstract}
-  TODO
-\end{abstract}
+%\begin{abstract}
+  %TODO
+%\end{abstract}
 
-\section{Introduction}
-TODO
+%\section{Introduction}
+%TODO
 
 \section{Project Description}
 \subsection{Goal}
@@ -73,7 +73,11 @@ where the data is formated as CSV files.
 
 \section{First Considerations}
 \subsection{Machine Learning Techniques}
-TODO
+Knowing that we were faced with a classification problem, we immediately
+considered a multitude of machine learning tecniques such as logistic
+regression, $k$-nearest neighbors, perceptron, support vector machine, k-means,
+and neural networks. In order to narrow our focus to a few methods, we needed to
+explore existing literature in the domain of handwritten digit recognition.
 
 \subsection{Related Work}
 Before we began implementing any classifiers, we wanted to investigate what
@@ -111,7 +115,7 @@ accuracy classifier.
 %in his paper, we expect a decrease in runtime and memory usage (which
 %would promote scaleability), as well as a large decrease in classification error.
 
-\section{Approach}
+\section{Approach} \label{approach}
 
 \subsection{Baselines}
 We used scikit-learn [6] to implement baselines for the $k$-NN classifier and the SVM.
@@ -247,6 +251,13 @@ cross-validation can be seen in figures \ref{fig:sklearn-sv-c-cv} and \ref{fig:s
 \label{fig:sklearn-svm-kernel-c-cv}
 \end{figure}
 
+We noticed that scikit-learn's kernelized SVM performed almost as badly as
+random guessing, which was very surprising to us. We knew that an RBF kernel was
+shift invariant and therefore should not be heavily impacted by the fact that
+the MNIST pixel data is not centered around 0. We concluded that other
+properties of the MNIST dataset, such as its sparseness, must not lend itself
+well to kernelization.
+
 \subsubsection{SVM Trained With Stochastic Gradient Descent}
 We have implemented a vanilla SVM trained with SGD. Performing cross-validation
 over varying step-sizes and C values, we obtained an optimal step size of $1 *
@@ -275,10 +286,49 @@ $10^{-7}$. Results of the cross-validation can be see in figure \ref{fig:pegasos
 \label{fig:pegasos-lambda-cv}
 \end{figure}
 
+Because there is only one hyper-parameter to tune in the PEGASOS algorithm, this
+SVM was simpler to train. Additionally, it performed slightly better than the
+SVM trained with SGD.
+
+\subsubsection{RBF Kernel Approximation with Random Fourier Features}
+When we saw how slowly scikit-learn's kernelized SVM trained, we decided to
+implement a kernel approximation method. We have implemented Random Fourier
+Features to approxmiate an RBF kernel [5].
+
+We confirmed that our implementation of Random Fourier Features was correct by
+applying it to a different domain (large scale classification in map-reduce [9]) and
+confirming that the RBF kernel approximation indeed reduces classification
+error. However, much like scikit-learn's RBF Kernel SVM, our RFF SVM performed
+quite poorly---nearly as bad as random guessing. We concluded, like before, that
+there must be some aspect of the MNIST dataset that does not lend itself well to kernelization.
+
 \subsection{CNN}
-TODO
+In order to achieve near state-of-the-art performance, we also implemented a
+convolutional neural network using TensorFlow [7]. Our neural network has two
+convolutional layers, one densely connected layer, and uses rectified linear
+units as well as dropout. This neural network was quite simple to implement in
+TensorFlow, and it performed significantly better than all of the previous methods.
+
+Most hyper-parameters, like the learning rate of the Adam [8], have been
+suggested by TensorFlow. This meant that the only hyper-parameter we had to tune
+was the number of training steps to take. We found that at around 20,000 training
+steps, the neural network performed extremely well.
 
 \section{Results} \label{results}
+
+For our final tests, we applied the optimal hyper-parameters found through cross-validation
+to their respective algorithms and built models for
+each of our algorithms. We calculate test error off of the same MNIST test set.
+Each model was trained as described in section \ref{approach}. These test errors
+are presented in figure \ref{fig:test-results}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{test-results.png}
+\caption{final test errors of the different classifiers}
+\label{fig:test-results}
+\end{figure}
+
 
 \subsubsection*{References}
 
@@ -303,6 +353,14 @@ TODO
 
   [6] Pedregosa, Fabian, et al. "Scikit-learn: Machine learning in Python."
   Journal of Machine Learning Research 12.Oct (2011): 2825-2830.
+
+  [7] Abadi, Martín, et al. "Tensorflow: Large-scale machine learning on
+  heterogeneous distributed systems." arXiv preprint arXiv:1603.04467 (2016).
+
+  [8] Kingma, Diederik, and Jimmy Ba. "Adam: A method for stochastic
+  optimization." arXiv preprint arXiv:1412.6980 (2014).
+
+  [9] https://github.com/dericp/large-scale-classification
 }
 
 \end{document}
